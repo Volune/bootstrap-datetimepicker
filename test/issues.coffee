@@ -78,3 +78,26 @@ suite 'issue', ->
     @widget.find('.datepicker .day:contains(25)').click()
     expect(@input.val()).to.equal('05/25/1905 21:52:14 0')
 
+  test "?? - Don't fail if there is no icon", ->
+    teardownDateTimePicker().call @
+    # markup without icon
+    setupDateTimePicker({
+      markup:
+        """
+        <div class="datetimepicker"
+            style="display:inline-block">
+          <input type="text" class="" name="start_time" id="start_time"
+                     value="2012-12-30 08:00:00" original-value="2012-12-30
+                     08:00:00" size="30">
+        </div>
+        """
+      format: 'yyyy-MM-dd hh:mm:ss'
+      language: 'en'
+      pickDate: true
+      pickTime: true
+      hourStep: 1
+      minuteStep: 15
+      secondStep: 30
+      inputMask: true
+    }).call @
+    @dateShouldEqual(2012, 11, 30, 8)
