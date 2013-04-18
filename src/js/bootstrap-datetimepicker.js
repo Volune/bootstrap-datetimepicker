@@ -49,13 +49,16 @@
         throw new Error('Must choose at least one picker');
       this.options = options;
       this.$element = $(element);
-      this.language = options.language in dates ? options.language : 'en'
+      this.language = options.language in dates ? options.language : 'en';
       this.pickDate = options.pickDate;
       this.pickTime = options.pickTime;
+      this.iconSelector = options.iconSelector;
       this.isInput = this.$element.is('input');
       this.component = false;
-      if (this.$element.is('.input-append') || this.$element.is('.input-prepend'))
-          this.component = this.$element.find('.add-on');
+      if (options.componentSelector)
+        this.component = this.$element.find(options.componentSelector);
+      else if (this.$element.is('.input-append') || this.$element.is('.input-prepend'))
+        this.component = this.$element.find('.add-on');
       this.format = options.format;
       if (!this.format) {
         if (this.isInput) this.format = this.$element.data('format');
@@ -63,8 +66,8 @@
         if (!this.format) this.format = 'MM/dd/yyyy';
       }
       this._compileFormat();
-      if (this.component) {
-        icon = this.component.find('i');
+      if (this.component && this.iconSelector) {
+        icon = this.component.find(this.iconSelector);
       }
       if (this.pickTime) {
         if (icon && icon.length) this.timeIcon = icon.data('time-icon');
@@ -952,9 +955,12 @@
             var collapseData = expanded.data('collapse');
             if (collapseData && collapseData.transitioning) return;
             expanded.collapse('hide');
-            closed.collapse('show')
+            closed.collapse('show');
             $this.find('i').toggleClass(self.timeIcon + ' ' + self.dateIcon);
-            self.$element.find('.add-on i').toggleClass(self.timeIcon + ' ' + self.dateIcon);
+            if (self.component && self.iconSelector) {
+              var icon = self.component.find(self.iconSelector);
+              icon.toggleClass(self.timeIcon + ' ' + self.dateIcon);
+            }
           }
         });
       }
@@ -1077,7 +1083,9 @@
     pickSeconds: true,
     startDate: -Infinity,
     endDate: Infinity,
-    collapse: true
+    collapse: true,
+    iconSelector: 'i',
+    componentSelector: null
   };
   $.fn.datetimepicker.Constructor = DateTimePicker;
   var dpgId = 0;
