@@ -4,3 +4,6 @@
 /test/jquery.js
 /test/bootstrap.js
 /test/bootstrap.css
+.idea/
+*.iml
+*.iws
