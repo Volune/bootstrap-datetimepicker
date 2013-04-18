@@ -1,8 +1,24 @@
 #!/bin/sh
-if [ ! -x ./node_modules/.bin/phantomjs ]; then
+case $OSTYPE in
+        msys*)
+                phantombin=phantomjs.exe
+                phantomsrc=$phantombin
+                ;;
+        *)
+                phantombin=phantomjs
+                phantomsrc=bin/$phantombin
+                ;;
+esac
+if [ ! -x ./node_modules/.bin/$phantombin ]; then
         case $OSTYPE in
                 darwin*)
                         f=phantomjs-1.8.1-macosx.zip
+                        d="${f%.zip}"
+                        wget http://phantomjs.googlecode.com/files/$f
+                        unzip $f
+                        ;;
+                msys*)
+                        f=phantomjs-1.8.1-windows.zip
                         d="${f%.zip}"
                         wget http://phantomjs.googlecode.com/files/$f
                         unzip $f
@@ -14,7 +30,7 @@ if [ ! -x ./node_modules/.bin/phantomjs ]; then
                         tar xf $f
                         ;;
         esac
-        mv "$d/bin/phantomjs" ./node_modules/.bin/
+        mv "$d/$phantomsrc" ./node_modules/.bin/
         rm -rf "$d"
         rm "$f"
 fi
